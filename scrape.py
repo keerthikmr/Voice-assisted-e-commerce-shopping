@@ -69,7 +69,10 @@ def extract_information(url):
         return detail_dict
         
     else:
-        print(f"Failed to retrieve the page. Status code: {response.status_code}")
+        if(response.status_code == 429):
+            print("Too many requests. Try again later.")
+        else:
+            print(f"Can't connect to webpage. Status code: {response.status_code}")
 
 url_to_scrape = ''
 specifications = extract_information(url_to_scrape)
