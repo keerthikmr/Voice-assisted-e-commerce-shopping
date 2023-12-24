@@ -71,9 +71,8 @@ def extract_information(url):
     else:
         if(response.status_code == 429):
             print("Too many requests. Try again later.")
+        
         else:
             print(f"Can't connect to webpage. Status code: {response.status_code}")
-
-url_to_scrape = 'https://www.flipkart.com/samsung-galaxy-f14-5g-omg-black-128-gb/p/itmae94033406fb2?pid=MOBGNBFNE6KGXCCR&lid=LSTMOBGNBFNE6KGXCCRXLTXS7&marketplace=FLIPKART&q=mobile&store=tyy%2F4io&srno=s_1_2&otracker=search&otracker1=search&fm=organic&iid=ed475f5f-53aa-48d2-bdf4-86106fe9fd6c.MOBGNBFNE6KGXCCR.SEARCH&ppt=clp&ppn=poco-m6-5g-coming-soon-store&ssid=cgtl1pwg340000001703084705255&qH=532c28d5412dd75b'
-specifications = extract_information(url_to_scrape)
-print(specifications)
+        
+        return 1

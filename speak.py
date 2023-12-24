@@ -1,19 +1,18 @@
 import pyttsx3
-# from similarity_matching import specification_name, specification_detail
 import similarity_matching as sm
 
-def speaker(text):
+def speaker(specificaion):
     engine = pyttsx3.init()
     
+    specification_name = specificaion[0]
+    specification_detail = specificaion[1]
+    
+    if (specification_name == '0'):
+        text = "Sorry, I could not find the specification you were looking for."
+    
+    else:
+        text = f"The {specification_name} is {specification_detail}"
+
     engine.say(text)
 
     engine.runAndWait()
-
-
-# if __name__ == "__main__":
-    
-#     if (sm.specification_name == '0'):
-#         speak("Sorry, I could not find the specification you were looking for.")
-    
-#     else:
-#         speak(f"The {sm.specification_name} is {sm.specification_detail}")

@@ -27,6 +27,7 @@ def get_most_similar_word(sentence, word_list):
     
     return [most_similar_word, max(similarity_scores)]
 
+
 def main(query, specification_dict):
 
     query = query.lower()   
