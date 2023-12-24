@@ -12,40 +12,40 @@ def extract_information(url):
 
         # Extract product name
         name = soup.find(class_='B_NuCI').text
-        detail_dict['Name'] = name
+        detail_dict['name'] = name
 
         # Extract product price
         current_price = soup.find(class_='_30jeq3 _16Jk6d').text
-        detail_dict['Current_price'] = current_price
+        detail_dict['price'] = current_price
 
         # Extract product original price
         if soup.find(class_='_3I9_wc _2p6lqe') is not None:
             original_price = soup.find(class_='_3I9_wc _2p6lqe').text
-            detail_dict['Original_price'] = original_price
+            detail_dict['original price'] = original_price
 
         # Extract product discount
         if soup.find(class_='_3Ay6Sb _31Dcoz') is not None:
             discount = soup.find(class_='_3Ay6Sb _31Dcoz').text
-            detail_dict['Discount'] = discount
+            detail_dict['discount'] = discount
 
         # Extract seller name
         seller_name = soup.find(class_='_1RLviY').text
-        detail_dict['Seller_name'] = seller_name
+        detail_dict['seller'] = seller_name
 
         # Extract product rating
         if soup.find(class_='_3LWZlK') is not None:
             rating = soup.find(class_='_3LWZlK').text
-            detail_dict['Rating'] = rating
+            detail_dict['rating'] = rating
         
         # Extract product rating count
         if soup.find(class_='row _2afbiS') is not None:
             rating_count = soup.find(class_='row _2afbiS').text[:-2]
-            detail_dict['Rating_count'] = rating_count
+            detail_dict['rating count'] = rating_count
 
         # Extract product review count
         try:
             review_count = soup.find_all(class_='row _2afbiS')[1].text
-            detail_dict['Review_count'] = review_count
+            detail_dict['review count'] = review_count
 
         except IndexError:
             review_count = 0
@@ -62,8 +62,8 @@ def extract_information(url):
 
         # Add each specification to the dictionary        
         for i in range(len(specification_name)):
-            key = specification_name[i].text
-            value = specification_detail[i].text
+            key = specification_name[i].text.lower()
+            value = specification_detail[i].text.lower()
             detail_dict[key] = value
         
         return detail_dict
@@ -74,5 +74,6 @@ def extract_information(url):
         else:
             print(f"Can't connect to webpage. Status code: {response.status_code}")
 
-url_to_scrape = ''
+url_to_scrape = 'https://www.flipkart.com/samsung-galaxy-f14-5g-omg-black-128-gb/p/itmae94033406fb2?pid=MOBGNBFNE6KGXCCR&lid=LSTMOBGNBFNE6KGXCCRXLTXS7&marketplace=FLIPKART&q=mobile&store=tyy%2F4io&srno=s_1_2&otracker=search&otracker1=search&fm=organic&iid=ed475f5f-53aa-48d2-bdf4-86106fe9fd6c.MOBGNBFNE6KGXCCR.SEARCH&ppt=clp&ppn=poco-m6-5g-coming-soon-store&ssid=cgtl1pwg340000001703084705255&qH=532c28d5412dd75b'
 specifications = extract_information(url_to_scrape)
+print(specifications)
