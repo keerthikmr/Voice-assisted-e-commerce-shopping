@@ -6,47 +6,60 @@ def extract_information(url):
 
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
-        
+
+        # Dictionary to store the product details
+        detail_dict = {}        
+
         # Extract product name
         name = soup.find(class_='B_NuCI').text
+        detail_dict['Name'] = name
 
         # Extract product price
         current_price = soup.find(class_='_30jeq3 _16Jk6d').text
+        detail_dict['Current_price'] = current_price
 
         # Extract product original price
-        original_price = soup.find(class_='_3I9_wc _2p6lqe').text
+        if soup.find(class_='_3I9_wc _2p6lqe') is not None:
+            original_price = soup.find(class_='_3I9_wc _2p6lqe').text
+            detail_dict['Original_price'] = original_price
 
         # Extract product discount
-        discount = soup.find(class_='_3Ay6Sb _31Dcoz').text
+        if soup.find(class_='_3Ay6Sb _31Dcoz') is not None:
+            discount = soup.find(class_='_3Ay6Sb _31Dcoz').text
+            detail_dict['Discount'] = discount
+
+        # Extract seller name
+        seller_name = soup.find(class_='_1RLviY').text
+        detail_dict['Seller_name'] = seller_name
 
         # Extract product rating
-        rating = soup.find(class_='_3LWZlK').text
-
+        if soup.find(class_='_3LWZlK') is not None:
+            rating = soup.find(class_='_3LWZlK').text
+            detail_dict['Rating'] = rating
+        
         # Extract product rating count
-        rating_count = soup.find(class_='row _2afbiS').text[:-1]
+        if soup.find(class_='row _2afbiS') is not None:
+            rating_count = soup.find(class_='row _2afbiS').text[:-2]
+            detail_dict['Rating_count'] = rating_count
 
         # Extract product review count
-        review_count = soup.find_all(class_='row _2afbiS')[1].text
+        try:
+            review_count = soup.find_all(class_='row _2afbiS')[1].text
+            detail_dict['Review_count'] = review_count
 
+        except IndexError:
+            review_count = 0
 
-        # Extract specification type
-        specification_name = soup.find_all(class_='_1hKmbr')
+        # Find the table with class _14cfVK
+        table = soup.find(class_='_14cfVK')
 
-        # Extract specificaion detail
-        specification_detail = soup.find_all(class_='_21lJbe')
+        # Find all elements of the table with class _1hKmbr
+        specification_name = soup.find_all(class_='_1hKmbr col col-3-12')
+
+        # Find all li elements of the table
+        specification_detail = soup.find_all(class_='URwL2w col col-9-12')
         
-        # Store the extracted information in a dictionary
-        detail_dict = {}
 
-        detail_dict['Name'] = name
-        detail_dict['Current_price'] = current_price
-        detail_dict['Original_price'] = original_price
-        detail_dict['Discount'] = discount
-        detail_dict['Rating'] = rating
-        detail_dict['Rating_count'] = rating_count
-        detail_dict['Review_count'] = review_count
-
-                
         # Add each specification to the dictionary        
         for i in range(len(specification_name)):
             key = specification_name[i].text
@@ -55,7 +68,6 @@ def extract_information(url):
         
         return detail_dict
         
-
     else:
         print(f"Failed to retrieve the page. Status code: {response.status_code}")
 
