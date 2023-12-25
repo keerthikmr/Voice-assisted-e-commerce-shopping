@@ -16,19 +16,24 @@ def result_display(text):
     specification = similarity_matching.main(text, detail_dict)
             
     if specification[0] != '0':
-        
         text = f"{specification[0]}: {specification[1]}"
     else:
         text = "No match found."
         text_label.config(foreground="red")
+
+    text_label_update(text)
+
+
+def text_label_update(text):
 
     text_label.config(text=text)
     
     label_width = text_label.winfo_reqwidth() + 70
 
     position_window(label_width, 50)
-    
-    text_label.grid(row=0, column=0, padx=5, pady=5)
+
+    text_label.grid(row=0, column=0)
+
 
 def recognize():
     if(url_accept == False):
@@ -46,26 +51,12 @@ def recognize():
             text = "Request too long."
             text_label.config(foreground="red")
         
-        text_label.config(text=text)
+        text_label_update(text)
+        text_label.update()
         
-        label_width = text_label.winfo_reqwidth() + 70
-
-        position_window(label_width, 50)
-        
-        text_label.grid(row=0, column=0, padx=5, pady=5)
-
         if text != None and len(text) <= 120:
             result_display(text)
-            # specification = similarity_matching.main(text, detail_dict)
-            
-            # if specification[0] != '0':
-                
-            #     text = f"{specification[0]}: {specification[1]}"
-            # else:
-            #     text = "No match found."
-            #     text_label.config(foreground="red")
 
-            # text_label.config(text=text)
 
 def url_get():
     url = url_entry.get("1.0", END)
@@ -107,7 +98,7 @@ def selector_window(e):
     
     submit_button = Button(select_window, text="Submit", command=url_get)
 
-    close_button = Button(select_window, text="Close Assistant", command=close)
+    close_button = Button(select_window, text="Close Assistant", command=close_window)
 
     inform_label = Label(select_window, text="", foreground="red")
 
@@ -119,9 +110,9 @@ def selector_window(e):
     select_window.mainloop()
 
 
-def close(e):
+def close_window():
     window.destroy()
-    selector_window.destroy()
+    select_window.destroy()
 
 
 url_accept = False
@@ -141,7 +132,7 @@ position_window(window_width, window_height)
 
 window.overrideredirect(True)
 
-button_img = Image.open("voice_button.png")
+button_img = Image.open("Assets/voice_button.png")
 button_img = button_img.resize((50, 50), Image.ANTIALIAS)
 button_img = ImageTk.PhotoImage(button_img)
 
