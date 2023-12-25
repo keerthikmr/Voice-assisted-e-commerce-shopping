@@ -2,7 +2,10 @@ import requests
 from bs4 import BeautifulSoup
 
 def extract_information(url):
-    response = requests.get(url)
+    try:
+        response = requests.get(url)
+    except:
+        return 1
 
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -70,9 +73,7 @@ def extract_information(url):
         
     else:
         if(response.status_code == 429):
-            print("Too many requests. Try again later.")
-        
-        else:
-            print(f"Can't connect to webpage. Status code: {response.status_code}")
+            return 2
         
         return 1
+        
