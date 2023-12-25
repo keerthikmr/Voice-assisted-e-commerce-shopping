@@ -1,12 +1,12 @@
 from sentence_transformers import SentenceTransformer, util
 
-def find_absolute_match(query, specification_list):
+def find_absolute_match(query, specification_dict):
     for word in query.split():
         if word in specification_dict.keys():
             return word
         
 
-def get_most_similar_word(sentence, word_list):
+def get_most_similar_word(sentence, specification_dict):
     
     word_list = list(specification_dict.keys())
     
