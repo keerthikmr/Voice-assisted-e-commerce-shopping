@@ -1,8 +1,19 @@
 from tkinter import *
 from PIL import Image, ImageTk
-import voice_recognition
+import speech_recognition as sr
 import scrape
 import similarity_matching
+from speak import speaker
+
+
+def update_listen():
+    text_label_update("Listening...")
+    speaker("listening")
+
+
+def update_recognize():
+    text_label_update("Recognizing...")
+    speaker("recognizing")
 
 
 def position_window(window_width, window_height):
@@ -10,51 +21,91 @@ def position_window(window_width, window_height):
     y = screen_height - window_height - 5
 
     window.geometry(f"{window_width}x{window_height}+{int(x)}+{int(y)}")
+    voice_button.update()
 
 
 def result_display(text):
+    text_label_update(text)
     specification = similarity_matching.main(text, detail_dict)
             
     if specification[0] != '0':
         text = f"{specification[0]}: {specification[1]}"
+        if (len(text) > 120):
+            text = text[:115] + "..."
     else:
         text = "No match found."
         text_label.config(foreground="red")
 
     text_label_update(text)
+    speaker(text)
 
 
 def text_label_update(text):
-
     text_label.config(text=text)
     
-    label_width = text_label.winfo_reqwidth() + 70
+    label_width = text_label.winfo_reqwidth() + 52
 
-    position_window(label_width, 50)
+    position_window(label_width, 55)
 
     text_label.grid(row=0, column=0)
+    text_label.update()
 
+
+def recognize_speech():
+    # Initialize recognizer and microphone
+    recognizer = sr.Recognizer()
+    mic = sr.Microphone()
+
+    with mic as source:
+        try:
+            recognizer.adjust_for_ambient_noise(source)
+            update_listen()
+            audio_data = recognizer.listen(source, timeout=5)
+
+        except sr.WaitTimeoutError:
+            return 1
+        
+        except Exception as e:
+            return None
+
+    try:
+        # Recognize speech using Google Speech Recognition
+        update_recognize()
+        text = recognizer.recognize_google(audio_data)
+        return text
+    
+    except Exception as e:
+            return None
+    
 
 def recognize():
+    global url_accept
     if(url_accept == False):
         selector_window(e=None)
     
-    else:    
-        text = voice_recognition.recognize_speech()
+    else:
+        text = recognize_speech()
         text_label.config(foreground="black")
 
         if (text == None):
             text = "Could not recognize your voice."
             text_label.config(foreground="red")
+            text_label_update(text)
+            speaker(text)
+        
+        elif(text == 1):
+            text = "No speech detected."
+            text_label.config(foreground="red")
+            text_label_update(text)
+            speaker(text)
 
         elif(len(text) > 120):
             text = "Request too long."
             text_label.config(foreground="red")
+            text_label_update(text)
+            speaker(text)
         
-        text_label_update(text)
-        text_label.update()
-        
-        if text != None and len(text) <= 120:
+        else:
             result_display(text)
 
 
@@ -118,7 +169,7 @@ def close_window():
 url_accept = False
 detail_dict = {}
 
-window =Tk()
+window = Tk()
 
 window.title("Shopping assistant")
 
@@ -128,18 +179,18 @@ screen_height = window.winfo_screenheight()
 window_width = 55
 window_height = 55
 
-position_window(window_width, window_height)
-
 window.overrideredirect(True)
 
 button_img = Image.open("Assets/voice_button.png")
 button_img = button_img.resize((50, 50), Image.ANTIALIAS)
-button_img = ImageTk.PhotoImage(button_img)
+button_img = ImageTk.PhotoImage(button_img, master=window)
 
 voice_button = Button(window, image=button_img, height=50, width=50, background="red", command=recognize)
 voice_button.grid(row=0, column=1)
 voice_button.bind("<Button-3>", selector_window)
 
-text_label = Label(window, wraplength=400, height=2)
+text_label = Label(window, wraplength=400, padx=10)
+
+position_window(window_width, window_height)
 
 window.mainloop()
